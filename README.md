@@ -1,63 +1,155 @@
-# Tradutor de Expressões Aritméticas
+# Arithmetic Expression Compiler (Python)
 
-Este projeto implementa um tradutor simples de expressões aritméticas com:
+A compiler pipeline for arithmetic expressions implemented entirely in Python with no external dependencies. The system performs lexical analysis, LL(1) recursive-descent parsing, 3-address intermediate code (IR) generation, and IR execution — exposed through an interactive REPL.
 
-- **Análise léxica** (tokenização por RegEx)
-- **Análise sintática** (parser LL(1) por descida recursiva)
-- **Geração de código intermediário** em formato de **3 endereços**
-- **Execução do código intermediário** para produzir o resultado final
-- **REPL** (loop) que fica esperando expressões, imprime erro ou resultado e continua
+---
 
-A linguagem aceita:
-- **Inteiros não-negativos** (ex.: `0`, `12`, `999`)
-- Operadores: `+` e `*`
-- Parênteses: `(` e `)`
+## Tech Stack
 
+| Component | Technology |
+|-----------|-----------|
+| Language | Python 3 (stdlib only) |
+| Lexer | Regular expressions (`re` module) |
+| Parser | LL(1) recursive descent |
+| IR | 3-address code with named temporaries |
+| Interface | Interactive REPL (stdin/stdout) |
+| Tests | `unittest` (standard library) |
 
-## 1) Comportamento exigido (REPL)
+---
 
-O programa:
-1. Fica esperando uma string (uma expressão) do usuário.
-2. Faz análise léxica e sintática.
-3. Se houver erro, imprime uma mensagem clara e volta a esperar outra string.
-4. Se estiver correta, imprime:
-   - confirmação de correção (léxico e sintático)
-   - resultado da expressão
-   e volta a esperar outra string.
+## Supported Language
 
+| Feature | Details |
+|---------|---------|
+| Literals | Non-negative integers (`0`, `42`, `999`) |
+| Operators | Addition (`+`), Multiplication (`*`) |
+| Grouping | Parentheses `( )` |
+| Precedence | `*` binds tighter than `+` |
 
-## 2) Gramática utilizada (LL)
+---
 
-A gramática implementada (forma típica para LL com precedência) é:
+## Grammar (LL(1))
 
+The grammar is factored to eliminate left recursion and encode operator precedence:
+
+```
 E  → T E'
 E' → + T E' | ε
 T  → F T'
 T' → * F T' | ε
-F  → número | ( E )
+F  → number | ( E )
+```
 
-Essa estrutura garante:
-- **precedência**: `*` é resolvido antes de `+`
-- **parênteses**: subexpressões entre `(` e `)` são avaliadas antes
+`E` handles addition, `T` handles multiplication, and `F` handles atoms (literals and parenthesized sub-expressions). This structure guarantees correct precedence without any post-processing.
 
+---
 
-## 3) Código intermediário (3 endereços)
+## Compilation Pipeline
 
-Durante o parsing, o sistema gera IR de 3 endereços com temporários:
+```
+Input string
+    │
+    ▼
+[Lexer]  analisador_lexico.py
+    │  Tokenizes input into: NUMBER, PLUS, STAR, LPAREN, RPAREN, EOF
+    │
+    ▼
+[Parser] analisador_sintatico.py
+    │  LL(1) recursive descent; drives IR generation during parsing
+    │
+    ▼
+[IR Generator] codigo_intermediario.py
+    │  Emits 3-address instructions: tN = operand op operand
+    │
+    ▼
+[IR Executor]
+    │  Evaluates the instruction list; returns the value of the last temporary
+    │
+    ▼
+Result
+```
 
-Exemplo para `2+3*4`:
+### Example — `2 + 3 * 4`
 
-t1 = 2  
-t2 = 3  
-t3 = 4  
-t4 = t2 * t3  
+Generated IR:
+
+```
+t1 = 2
+t2 = 3
+t3 = 4
+t4 = t2 * t3
 t5 = t1 + t4
+```
 
-O resultado final é o valor do último temporário.
+Result: `t5 = 14`
 
+---
 
-## 4) Como rodar
+## Project Structure
 
-### Rodar normalmente (saída “limpa”)
+```
+python-expression-compiler/
+├── main.py                          # Entry point, launches the REPL
+├── requirements.txt                 # Empty (no external dependencies)
+├── src/tradutor_expressoes/
+│   ├── tokens.py                    # Token type definitions
+│   ├── analisador_lexico.py         # Lexer (tokenizer)
+│   ├── analisador_sintatico.py      # Parser (LL(1) recursive descent)
+│   ├── codigo_intermediario.py      # 3-address IR generator and executor
+│   ├── interface_repl.py            # REPL loop
+│   ├── erros.py                     # Error types (LexicalError, SyntaxError)
+│   └── utils.py                     # Shared utilities
+└── tests/
+    ├── teste_analisador_lexico.py
+    ├── teste_avaliacao_expressao.py
+    ├── teste_erros_sintaticos.py
+    └── teste_interface_repl.py
+```
+
+---
+
+## Running
+
+### Standard mode
+
 ```bash
-py main.py
+python main.py
+```
+
+The REPL reads one expression per line, prints the result, and loops. On error, prints a diagnostic and continues.
+
+```
+> 2 + 3 * 4
+Expressão válida. Resultado: 14
+
+> (1 + 2) * (3 + 4)
+Expressão válida. Resultado: 21
+
+> 2 +
+Erro sintático: token inesperado após '+'
+```
+
+### Debug mode
+
+Prints the token stream and full IR listing before the result:
+
+```bash
+python main.py --debug
+```
+
+---
+
+## Running Tests
+
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run a single test file
+python -m pytest tests/teste_analisador_lexico.py
+
+# Run with verbose output
+python -m pytest tests/ -v
+```
+
+No installation required — all dependencies are part of the Python standard library.
