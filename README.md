@@ -2,6 +2,12 @@
 
 A compiler pipeline for arithmetic expressions implemented entirely in Python with no external dependencies. The system performs lexical analysis, LL(1) recursive-descent parsing, 3-address intermediate code (IR) generation, and IR execution — exposed through an interactive REPL.
 
+### 🧪 Playground interativo (ao vivo)
+
+**[leonardopcavalcanti.github.io/python-expression-compiler](https://leonardopcavalcanti.github.io/python-expression-compiler/)** — ferramenta web educacional que mostra, ao vivo, cada fase da compilação: **tokens → árvore sintática (AST) → código de 3 endereços → execução passo a passo**, além de mensagens de erro com indicador de posição.
+
+> O playground (em [`playground/`](playground/)) é um port fiel do compilador para TypeScript (React + Vite), rodando 100% no navegador. Útil como apoio didático para a disciplina de Compiladores.
+
 ---
 
 ## Tech Stack
