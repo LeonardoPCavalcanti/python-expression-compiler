@@ -4,6 +4,8 @@ A compiler pipeline for arithmetic expressions implemented entirely in Python wi
 
 ### 🧪 Playground interativo (ao vivo)
 
+[![Playground do compilador — tokens, AST, IR e execução](docs/preview.png)](https://leonardopcavalcanti.github.io/python-expression-compiler/)
+
 **[leonardopcavalcanti.github.io/python-expression-compiler](https://leonardopcavalcanti.github.io/python-expression-compiler/)** — ferramenta web educacional que mostra, ao vivo, cada fase da compilação: **tokens → árvore sintática (AST) → código de 3 endereços → execução passo a passo**, além de mensagens de erro com indicador de posição.
 
 > O playground (em [`playground/`](playground/)) é um port fiel do compilador para TypeScript (React + Vite), rodando 100% no navegador. Útil como apoio didático para a disciplina de Compiladores.
