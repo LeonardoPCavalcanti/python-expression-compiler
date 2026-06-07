@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import type { AstNode } from '../compiler';
 
 /**
@@ -17,21 +18,32 @@ function Node({ node }: { node: AstNode }) {
   if (node.kind === 'num') {
     return (
       <div className="flex flex-col items-center">
-        <span className="grid h-10 w-10 place-items-center rounded-lg border border-green/40 bg-green/10 font-mono text-sm font-700 text-green">
+        <motion.span
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="grid h-10 w-10 place-items-center rounded-lg border border-green/50 bg-green/10 font-mono text-sm font-700 text-green"
+        >
           {node.value}
-        </span>
+        </motion.span>
       </div>
     );
   }
 
-  const opColor = node.op === '*' ? 'text-pink border-pink/40 bg-pink/10' : 'text-accent border-accent/40 bg-accent/10';
+  const opColor =
+    node.op === '*'
+      ? 'text-pink border-pink/50 bg-pink/10'
+      : 'text-accent border-accent/50 bg-accent/10';
   return (
     <div className="flex flex-col items-center">
-      <span
+      <motion.span
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className={`grid h-10 w-10 place-items-center rounded-lg border font-mono text-lg font-700 ${opColor}`}
       >
         {node.op}
-      </span>
+      </motion.span>
       {/* conector vertical */}
       <span className="h-4 w-px bg-line" />
       <div className="flex items-start gap-6 border-t border-line pt-4">

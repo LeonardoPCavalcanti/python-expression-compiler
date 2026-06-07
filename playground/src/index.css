@@ -3,11 +3,24 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  @apply bg-ink font-sans text-white/90 antialiased;
+  @apply bg-paper font-sans text-navy antialiased;
+  /* Papel milimetrado de engenharia: grade fina azul sobre papel claro. */
+  background-color: #f4f7fb;
+  background-image:
+    linear-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(37, 99, 235, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.12) 1px, transparent 1px);
+  background-size:
+    22px 22px,
+    22px 22px,
+    110px 110px,
+    110px 110px;
+  background-attachment: fixed;
 }
 
 @media (prefers-reduced-motion: reduce) {
