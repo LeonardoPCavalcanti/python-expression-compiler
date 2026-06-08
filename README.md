@@ -12,6 +12,46 @@ A compiler pipeline for arithmetic expressions implemented entirely in Python wi
 
 ---
 
+## O que este projeto ensina
+
+> Um compilador é uma das ideias mais elegantes da Ciência da Computação: transformar texto em significado executável, fase por fase. Este projeto isola o **front-end** de um compilador para que cada etapa fique visível.
+
+### 1. As três fases do front-end
+```
+texto  →  [Análise Léxica]  →  tokens  →  [Análise Sintática]  →  AST  →  [Geração de IR]  →  código intermediário
+```
+- **Análise léxica (lexer):** quebra a sequência de caracteres em *tokens* (`NUMBER`, `PLUS`, `STAR`, `LPAREN`...). É reconhecimento de **linguagens regulares** — por isso o lexer usa expressões regulares.
+- **Análise sintática (parser):** verifica se a sequência de tokens obedece à **gramática** e constrói a estrutura. Aqui saímos das linguagens regulares para as **linguagens livres de contexto** (uma regular não conta parênteses balanceados; uma livre de contexto, sim).
+- **Geração de código intermediário (IR):** traduz a estrutura para instruções simples e independentes de máquina.
+
+### 2. Por que a gramática é fatorada para LL(1)
+A gramática deste projeto não é "natural" por acaso:
+```
+E  → T E'      E' → + T E' | ε
+T  → F T'      T' → * F T' | ε
+F  → number | ( E )
+```
+- **Eliminação de recursão à esquerda:** uma regra como `E → E + T` faria um parser descendente recursivo entrar em **loop infinito**. A reescrita com `E'` remove isso.
+- **LL(1) = decisão com 1 token de *lookahead*:** o parser escolhe qual regra aplicar olhando **apenas o próximo token**, sem retroceder (*backtracking*). É o que torna o *recursive descent* simples e linear.
+- **Precedência embutida na estrutura:** `*` fica "mais fundo" na gramática (`T`) que `+` (`E`), então `2 + 3 * 4` agrupa a multiplicação primeiro — sem nenhum pós-processamento.
+
+### 3. Código de três endereços (3-address code)
+A IR usa **temporários nomeados** (`t1`, `t2`, ...), cada instrução com no máximo um operador:
+```
+t4 = t2 * t3
+t5 = t1 + t4
+```
+É a forma intermediária clássica entre a árvore e o código de máquina — fácil de otimizar e de mapear para registradores. É também a fronteira onde a **avaliação** acontece (a expressão vira uma lista de passos executáveis).
+
+### 4. Erros como cidadãos de primeira classe
+Lexer e parser distinguem **erro léxico** (um caractere que não forma token) de **erro sintático** (tokens válidos em ordem inválida), reportando a **posição** — a base de boas mensagens de compilador.
+
+**Leituras de referência:**
+- Aho, Lam, Sethi & Ullman — *Compilers: Principles, Techniques, and Tools* (o "livro do dragão"), caps. 3 (análise léxica) e 4 (análise sintática).
+- Robert Nystrom — [*Crafting Interpreters*](https://craftinginterpreters.com/) (gratuito online), excelente introdução prática a lexers e parsers.
+
+---
+
 ## Tech Stack
 
 | Component | Technology |
