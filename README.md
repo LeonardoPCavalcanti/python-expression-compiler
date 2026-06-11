@@ -1,8 +1,12 @@
 # Arithmetic Expression Compiler (Python)
 
+[![CI](https://github.com/LeonardoPCavalcanti/python-expression-compiler/actions/workflows/ci.yml/badge.svg)](https://github.com/LeonardoPCavalcanti/python-expression-compiler/actions/workflows/ci.yml)
+![Pytest](https://img.shields.io/badge/pytest-15_testes-0A9EDC?logo=pytest&logoColor=white)
+![Dependencias](https://img.shields.io/badge/dependencias-zero-success)
+
 A compiler pipeline for arithmetic expressions implemented entirely in Python with no external dependencies. The system performs lexical analysis, LL(1) recursive-descent parsing, 3-address intermediate code (IR) generation, and IR execution — exposed through an interactive REPL.
 
-### 🧪 Playground interativo (ao vivo)
+### Playground interativo (ao vivo)
 
 [![Playground do compilador — tokens, AST, IR e execução](docs/preview.png)](https://leonardopcavalcanti.github.io/python-expression-compiler/)
 
@@ -189,15 +193,19 @@ python main.py --debug
 
 ## Running Tests
 
+The suite in [`tests/test_tradutor.py`](tests/test_tradutor.py) covers every phase: tokenization
+(multi-digit numbers, whitespace handling, lexical errors), end-to-end evaluation (operator
+precedence, left associativity, nested parentheses) and syntactic error handling (malformed
+inputs). It runs on every push via GitHub Actions, on Python 3.12 and 3.13.
+
 ```bash
+pip install pytest
+
 # Run all tests
 python -m pytest tests/
-
-# Run a single test file
-python -m pytest tests/teste_analisador_lexico.py
 
 # Run with verbose output
 python -m pytest tests/ -v
 ```
 
-No installation required — all dependencies are part of the Python standard library.
+The compiler itself has zero dependencies — pytest is needed only to run the tests.
