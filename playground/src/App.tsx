@@ -43,6 +43,7 @@ export default function App() {
             href="https://github.com/LeonardoPCavalcanti/python-expression-compiler"
             target="_blank"
             rel="noreferrer"
+            aria-label="Repositório do projeto no GitHub"
             className="flex items-center gap-1.5 rounded-lg border border-line bg-panel px-3 py-1.5 text-sm text-muted transition-colors hover:border-accent/50 hover:text-navy"
           >
             <Github size={16} /> <span className="hidden sm:inline">Código</span>
